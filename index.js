@@ -1,6 +1,6 @@
 const fs = require('fs');
 const XLSX = require('xlsx');
-const { Document, Packer, Paragraph, HeadingLevel } = require('docx');
+const officegen = require('officegen');
 
 // Read the Excel file
 const workbook = XLSX.readFile('input.xlsx');
@@ -9,11 +9,7 @@ const worksheet = workbook.Sheets[sheetName];
 const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
 // Create a new Word document
-const doc = new Document();
-
-let currentLevel1 = null;
-let currentLevel2 = null;
-let currentLevel3 = null;
+const doc = officegen('docx');
 
 data.forEach((row, index) => {
   if (index === 0) return; // Skip header row
@@ -21,39 +17,29 @@ data.forEach((row, index) => {
   const [level1, level2, level3, content1, content2] = row;
 
   if (level1) {
-    currentLevel1 = new Paragraph({
-      text: level1,
-      heading: HeadingLevel.HEADING_1,
-    });
-    doc.addSection({ children: [currentLevel1] });
+    const pObj = doc.createP();
+    pObj.addText(level1, { bold: true, font_size: 24 });
   }
 
   if (level2) {
-    currentLevel2 = new Paragraph({
-      text: level2,
-      heading: HeadingLevel.HEADING_2,
-    });
-    doc.addSection({ children: [currentLevel2] });
+    const pObj = doc.createP();
+    pObj.addText(level2, { bold: true, font_size: 20 });
   }
 
   if (level3) {
-    currentLevel3 = new Paragraph({
-      text: level3,
-      heading: HeadingLevel.HEADING_3,
-    });
-    doc.addSection({ children: [currentLevel3] });
+    const pObj = doc.createP();
+    pObj.addText(level3, { bold: true, font_size: 16 });
   }
 
   if (content1 || content2) {
-    const content = new Paragraph({
-      text: `${content1 || ''} ${content2 || ''}`,
-    });
-    doc.addSection({ children: [content] });
+    const pObj = doc.createP();
+    pObj.addText(`${content1 || ''} ${content2 || ''}`);
   }
 });
 
 // Save the document
-Packer.toBuffer(doc).then((buffer) => {
-  fs.writeFileSync('output.docx', buffer);
+const out = fs.createWriteStream('output.docx');
+doc.generate(out);
+out.on('close', () => {
   console.log('Word document created successfully.');
 });
