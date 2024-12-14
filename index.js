@@ -1,3 +1,4 @@
+/* eslint-env node */
 const fs = require('fs');
 const XLSX = require('xlsx');
 const {
@@ -20,18 +21,18 @@ const doc = new Document({
   sections: [],
 });
 
-// Helper function to create a paragraph with specific text, size, and heading level
-const createParagraph = (text, size, bold = false, heading = null) => {
-  return new Paragraph({
+// Helper function to create paragraphs with specific text, size, and heading level
+const createParagraphs = (text, size, bold = false, heading = null) => {
+  return text.split('\n').map(line => new Paragraph({
     children: [
       new TextRun({
-        text,
+        text: line,
         bold,
         size,
       }),
     ],
     heading,
-  });
+  }));
 };
 
 data.forEach((row, index) => {
@@ -39,23 +40,25 @@ data.forEach((row, index) => {
 
   const [level1, level2, level3, content1, content2, content3] = row;
 
+  console.log('Processing row:', row, index);
+
   const sectionChildren = [];
 
   if (level1) {
     sectionChildren.push(
-      createParagraph(level1, 48, true, HeadingLevel.HEADING_1)
+      ...createParagraphs(level1, 48, true, HeadingLevel.HEADING_1)
     );
   }
 
   if (level2) {
     sectionChildren.push(
-      createParagraph(level2, 40, true, HeadingLevel.HEADING_2)
+      ...createParagraphs(level2, 40, true, HeadingLevel.HEADING_2)
     );
   }
 
   if (level3) {
     sectionChildren.push(
-      createParagraph(level3, 36, true, HeadingLevel.HEADING_3)
+      ...createParagraphs(level3, 36, true, HeadingLevel.HEADING_3)
     );
   }
 
@@ -64,7 +67,7 @@ data.forEach((row, index) => {
 
   // Add the concatenated content to the section
   if (concatenatedContent) {
-    sectionChildren.push(createParagraph(concatenatedContent, 24));
+    sectionChildren.push(...createParagraphs(concatenatedContent, 24));
   }
 
   // Add the section children to the document

@@ -15,5 +15,9 @@
     "mammoth": "^1.8.0",
     "officegen": "^0.6.5",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^2.0.0"
   }
 }
