@@ -9,7 +9,9 @@ const worksheet = workbook.Sheets[sheetName];
 const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
 // Create a new Word document
-const doc = new Document();
+const doc = new Document({
+  sections: [],
+});
 
 data.forEach((row, index) => {
   if (index === 0) return; // Skip header row
@@ -61,4 +63,6 @@ data.forEach((row, index) => {
 Packer.toBuffer(doc).then((buffer) => {
   fs.writeFileSync('output.docx', buffer);
   console.log('Word document created successfully.');
+}).catch((error) => {
+  console.error('Error creating Word document:', error);
 });
