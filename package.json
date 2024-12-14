@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "docx": "^7.1.0",
+    "docx": "^9.1.0",
     "officegen": "^0.6.5",
     "xlsx": "^0.18.5"
   }
