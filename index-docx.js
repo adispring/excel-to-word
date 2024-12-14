@@ -1,6 +1,6 @@
 const fs = require('fs');
 const XLSX = require('xlsx');
-const officegen = require('officegen');
+const { Document, Packer, Paragraph, TextRun } = require('docx');
 
 // Read the Excel file
 const workbook = XLSX.readFile('input.xlsx');
@@ -9,37 +9,56 @@ const worksheet = workbook.Sheets[sheetName];
 const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
 // Create a new Word document
-const doc = officegen('docx');
+const doc = new Document();
 
 data.forEach((row, index) => {
   if (index === 0) return; // Skip header row
 
   const [level1, level2, level3, content1, content2] = row;
 
-  if (level1) {0
-    const pObj = doc.createP();
-    pObj.addText(level1, { bold: true, font_size: 24 });
+  if (level1) {
+    doc.addSection({
+      children: [
+        new Paragraph({
+          children: [new TextRun({ text: level1, bold: true, size: 48 })],
+        }),
+      ],
+    });
   }
 
   if (level2) {
-    const pObj = doc.createP();
-    pObj.addText(level2, { bold: true, font_size: 20 });
+    doc.addSection({
+      children: [
+        new Paragraph({
+          children: [new TextRun({ text: level2, bold: true, size: 40 })],
+        }),
+      ],
+    });
   }
 
   if (level3) {
-    const pObj = doc.createP();
-    pObj.addText(level3, { bold: true, font_size: 16 });
+    doc.addSection({
+      children: [
+        new Paragraph({
+          children: [new TextRun({ text: level3, bold: true, size: 32 })],
+        }),
+      ],
+    });
   }
 
   if (content1 || content2) {
-    const pObj = doc.createP();
-    pObj.addText(`${content1 || ''} ${content2 || ''}`);
+    doc.addSection({
+      children: [
+        new Paragraph({
+          children: [new TextRun(`${content1 || ''} ${content2 || ''}`)],
+        }),
+      ],
+    });
   }
 });
 
 // Save the document
-const out = fs.createWriteStream('output.docx');
-doc.generate(out);
-out.on('close', () => {
+Packer.toBuffer(doc).then((buffer) => {
+  fs.writeFileSync('output.docx', buffer);
   console.log('Word document created successfully.');
 });
