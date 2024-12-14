@@ -34,40 +34,38 @@ const createParagraph = (text, size, bold = false, heading = null) => {
   });
 };
 
-let currentLevel1 = '';
-let currentLevel2 = '';
-let currentLevel3 = '';
-
 data.forEach((row, index) => {
-  // if (index === 0) return; // Skip header row
+  if (index === 0) return; // Skip header row
 
-  const [level1, level2, level3, content1, content2] = row;
+  const [level1, level2, level3, content1, content2, content3] = row;
 
   const sectionChildren = [];
 
   if (level1) {
-    currentLevel1 = level1;
     sectionChildren.push(
-      createParagraph(currentLevel1, 48, true, HeadingLevel.HEADING_1)
+      createParagraph(level1, 48, true, HeadingLevel.HEADING_1)
     );
   }
 
   if (level2) {
-    currentLevel2 = level2;
     sectionChildren.push(
-      createParagraph(currentLevel2, 40, true, HeadingLevel.HEADING_2)
+      createParagraph(level2, 40, true, HeadingLevel.HEADING_2)
     );
   }
 
   if (level3) {
-    currentLevel3 = level3;
     sectionChildren.push(
-      createParagraph(currentLevel3, 36, true, HeadingLevel.HEADING_3)
+      createParagraph(level3, 36, true, HeadingLevel.HEADING_3)
     );
   }
 
   // Concatenate content1 and content2 with "; "
-  const concatenatedContent = [content1, content2].filter(Boolean).join('; ');
+  let concatenatedContent = '';
+  if (['模型许可证', '使用政策说明'].includes(content1)) {
+    concatenatedContent = [content1, content3].filter(Boolean).join('; ');
+  } else {
+    concatenatedContent = [content1, content3].filter(Boolean).join('; ');
+  }
 
   // Add the concatenated content to the section
   if (concatenatedContent) {
