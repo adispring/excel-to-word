@@ -59,13 +59,8 @@ data.forEach((row, index) => {
     );
   }
 
-  // Concatenate content1 and content2 with "; "
-  let concatenatedContent = '';
-  if (['模型许可证', '使用政策说明'].includes(content1)) {
-    concatenatedContent = [content1, content3].filter(Boolean).join('; ');
-  } else {
-    concatenatedContent = [content1, content3].filter(Boolean).join('; ');
-  }
+  // Concatenate content1 and content3 with "; "
+  const concatenatedContent = [content1, content3].filter(Boolean).join('; ');
 
   // Add the concatenated content to the section
   if (concatenatedContent) {
